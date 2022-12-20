@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import aprendendo.spring.ToDoList.entities.Task;
 import aprendendo.spring.ToDoList.repositories.ToDoRepository;
+import aprendendo.spring.ToDoList.utils.Response;
 
 @RestController
 public class ToDoController {
@@ -28,34 +29,34 @@ public class ToDoController {
     }
 
     @PostMapping("/add")
-    public @ResponseBody ResponseEntity<String> addNewTask(@RequestBody Task task) {
+    public @ResponseBody ResponseEntity<Response> addNewTask(@RequestBody Task task) {
         repository.save(task);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Task created");
+        return ResponseEntity.status(HttpStatus.CREATED).body(new Response("Task Created"));
     }
 
     @DeleteMapping("/delete")
-    public @ResponseBody ResponseEntity<String> deleteTask(@RequestParam int id) {
+    public @ResponseBody ResponseEntity<Response> deleteTask(@RequestParam int id) {
         Optional<Task> task = repository.findById(id);
         if(task.isEmpty() == false) {
             repository.deleteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(String.format("Task com o id %s deletada",id));
+            return ResponseEntity.status(HttpStatus.OK).body(new Response(String.format("Task com o id %s deletada",id)));
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("Task com o id %s não encontrada",id));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response(String.format("Task com o id %s não encontrada",id)));
     }
 
     @PutMapping("/conclude")
-    public @ResponseBody ResponseEntity<String> concludeTask(@RequestParam int id) {
+    public @ResponseBody ResponseEntity<Response> concludeTask(@RequestParam int id) {
         Optional<Task> task = repository.findById(id);
         if(task.isEmpty() == false) {
             Task t = task.get();
             if(t.getConcluded() == true) {
-                return ResponseEntity.status(HttpStatus.OK).body(String.format("Task com o id %s ja está concluida",id));
+                return ResponseEntity.status(HttpStatus.OK).body(new Response(String.format("Task com o id %s ja está concluida",id)));
             }
             t.setConcluded();
             repository.save(t);
-            return ResponseEntity.status(HttpStatus.OK).body(String.format("Task com o id %s concluida",id));
+            return ResponseEntity.status(HttpStatus.OK).body(new Response(String.format("Task com o id %s concluida",id)));
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("Task com o id %s não encontrada",id));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response(String.format("Task com o id %s não encontrada",id)));
     } 
     
 }
